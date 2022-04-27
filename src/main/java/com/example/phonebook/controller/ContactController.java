@@ -10,16 +10,17 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-/*
-* TODO @VALID W POSCIE
-*
-* */
+
 @RestController
 @AllArgsConstructor
 public class ContactController {
@@ -36,7 +37,7 @@ public class ContactController {
 
 
     @PostMapping("/contact")
-    public void addContact( @RequestBody ContactRequest contact) {
+    public void addContact(@Valid @RequestBody ContactRequest contact) {
         Contact newContact = modelMapper.map(contact, Contact.class);
         //return contactService.addAddress(contact.getFirstname(),contact.getLastname(),contact.getEmail(),contact.getBusinessphone(),contact.getHomephone(),contact.getPhoto());
         contactRepository.save(newContact);
@@ -65,6 +66,19 @@ public class ContactController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 
 }

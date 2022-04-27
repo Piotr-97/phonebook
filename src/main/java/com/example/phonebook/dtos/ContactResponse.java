@@ -11,7 +11,7 @@ public class ContactResponse {
     private String homephone;
     private String businessphone;
     private String email;
-    private Boolean photo;
+    private Boolean  photo;
 
 
 
