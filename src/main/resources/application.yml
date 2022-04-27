@@ -1,0 +1,20 @@
+spring:
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+      path: /console
+  datasource:
+    url: jdbc:h2:file:./phonebook
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        use-new-id-generator-mappings: false
+        hbm2ddl:
+          auto: create
+    defer-datasource-initialization:
